@@ -1,0 +1,53 @@
+﻿
+@page "/vybaveni/{Id:guid}"
+@inject HttpClient Http
+
+
+
+<PageTitle>Detail vybaveni</PageTitle>
+
+@if (seznamVybaveni == null)
+{
+    <div class="absolute right-1/2 bottom-1/2  transform translate-x-1/2 translate-y-1/2 ">
+        <div class=" border-t-transparent border-solid animate-spin  rounded-full border-teal-600 border-8 h-16 w-16"></div>
+    </div>
+    return;
+}
+
+ @foreach (var item in seznamVybaveni)
+    {
+        @if(Id == item.Id) {
+        <div class="grid grid-cols-2"> 
+        <div>Název</div>
+        <div>@item.Name</div>
+        <div>Id</div>
+        <div>@item.Id</div>
+        <div>Datum Koupe</div>
+        <div>@item.BoughtDateTime</div>
+        <div>Datum Posledni revize</div>
+        <div>@item.LastRevision</div>
+        <div>Cena [czk]</div>
+        <div>@item.PriceCzk</div>
+        </div>
+        }
+
+    }
+
+
+
+
+@code {
+
+    [Parameter] public Guid Id { get; set; }
+
+    List<VybaveniModel>? seznamVybaveni;
+
+	protected override async Task OnInitializedAsync()
+    {
+        seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
+
+    }
+
+
+
+}
