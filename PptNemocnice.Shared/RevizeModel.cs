@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace PptNemocnice.Shared
 {
+
+    
     internal class RevizeModel
     {
+        public Guid Id { get; set; }
+        public string Nazev { get; set; }
     }
 }
