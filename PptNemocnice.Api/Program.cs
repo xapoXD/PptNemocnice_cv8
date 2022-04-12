@@ -1,5 +1,8 @@
 using PptNemocnice.Shared;
 
+List<VybaveniModel>? seznamVybaveni;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +80,8 @@ app.MapDelete("/vybaveni/{Id}",(Guid Id ) =>
 
 
 app.Run();
+
+
 
 //record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
 //{
