@@ -30,6 +30,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 List<VybaveniModel> seznam = VybaveniModel.GetTestList();
+List<RevizeModel> seznamRevizi = RevizeModel.NahodnySeznam(1000);
+
 
 app.MapGet("/vybaveni", () =>
 {
@@ -78,6 +80,13 @@ app.MapDelete("/vybaveni/{Id}",(Guid Id ) =>
 }
 );
 
+app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec) =>
+{
+    if (string.IsNullOrWhiteSpace(vyhledavanyRetezec)) return Results.Problem("Parametr nesmi byt prazdny");
+
+    var kdeJeRetezec = seznamRevizi.Where(x => x.Nazev.Contains(vyhledavanyRetezec));
+    return Results.Json(kdeJeRetezec);
+});
 
 app.Run();
 
