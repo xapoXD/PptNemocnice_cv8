@@ -1,10 +1,19 @@
+using AutoMapper;
+using PptNemocnice.Api.Data;
 using PptNemocnice.Shared;
-
-List<VybaveniModel>? seznamVybaveni;
-
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddDbContext<NemocniceDBcontext>(opt => opt.UseSqlite("FileName=Nemocnice.db"));
+
+
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());  
+
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,67 +38,113 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-List<VybaveniModel> seznam = VybaveniModel.GetTestList();
-List<RevizeModel> seznamRevizi = RevizeModel.NahodnySeznam(1000);
+//List<VybaveniModel> seznam = VybaveniModel.GetTestList();
+//List<RevizeModel> seznamRevizi = RevizeModel.NahodnySeznam(1000);
 
 
-app.MapGet("/vybaveni", () =>
+
+//HOTOVO
+app.MapGet("/vybaveni", (NemocniceDBcontext db) =>
 {
-    return seznam;
+    //Console.WriteLine(db.Vybavenis.Count());
+
+    return db.Vybavenis;
 });
 
-app.MapGet("/vybaveni/jensrevizi", (int c) =>
+
+//HOTOVO
+app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 {
-    return seznam.Where(x=>!x.NeedsRevision);
+   // return seznam.Where(x => !x.NeedsRevision);
+
+    return db.Vybavenis.Where(x => !(DateTime.Now - x.LastRevision > TimeSpan.FromDays(365 * 2)));
 });
 
 
-
-app.MapGet("/vybaveni/{Id}",(Guid Id) =>
+// HOTOVO
+app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db) =>
 {
-    var item = seznam.SingleOrDefault(x => x.Id == Id);
+    var item = db.Vybavenis.SingleOrDefault(x => x.Id == Id);
     if (item == null) return Results.NotFound("takováto entita neexistuje");
     return Results.Json(item);
 });
 
-app.MapPost("/vybaveni", (VybaveniModel prichoziModel) =>
+
+
+//HOTOVO
+app.MapPost("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
-    prichoziModel.Id = Guid.NewGuid();
-    seznam.Insert(0, prichoziModel);
-    return Results.Created("/vybaveni",prichoziModel.Id);
+
+    prichoziModel.Id = Guid.Empty;
+
+    Vybaveni ent = mapper.Map<Vybaveni>(prichoziModel);
+    db.Vybavenis.Add(ent);
+    db.SaveChanges(); // nyni pridano do databaze
+    
+    
+    return Results.Created("/vybaveni",ent.Id);
 });
 
-app.MapPut("/vybaveni", (VybaveniModel prichoziModel) =>
+
+
+
+
+// HOTOVO
+app.MapPut("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
+    /*
     var staryZaznam = seznam.SingleOrDefault(x => x.Id == prichoziModel.Id);
     if (staryZaznam == null) return Results.NotFound("Tento záznam není v seznamu");
     int ind = seznam.IndexOf(staryZaznam);
     seznam.Insert(ind, prichoziModel);
     seznam.Remove(staryZaznam);
     return Results.Ok();
+    */
+    var staryZaznam = db.Vybavenis.SingleOrDefault(x => x.Id == prichoziModel.Id);
+    Vybaveni ent = mapper.Map<Vybaveni>(staryZaznam);
+    if (staryZaznam == null) return Results.NotFound("Tento záznam není v seznamu");
+    
+  //  int ind = db.Vybavenis.IndexOf(staryZaznam);
+
+    db.Vybavenis.Add(ent);
+    db.Vybavenis.Remove(staryZaznam);
+    db.SaveChanges();
+
+    return Results.Ok();
 });
 
 
-app.MapDelete("/vybaveni/{Id}",(Guid Id ) =>
+//HOTOVO
+app.MapDelete("/vybaveni/{Id}",(Guid Id , NemocniceDBcontext db, IMapper mapper) =>
 {
-    var item = seznam.SingleOrDefault(x=> x.Id == Id);
+    var item = db.Vybavenis.SingleOrDefault(x=> x.Id == Id);
     if (item == null) 
         return Results.NotFound("Tato položka nebyla nalezena!!");
-    seznam.Remove(item);
+    db.Vybavenis.Remove(item);
+    db.SaveChanges();
     return Results.Ok();
 }
 );
 
-app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec) =>
+
+//HOTOVO
+app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec, NemocniceDBcontext db, IMapper mapper) =>
 {
     if (string.IsNullOrWhiteSpace(vyhledavanyRetezec)) return Results.Problem("Parametr nesmi byt prazdny");
 
-    var kdeJeRetezec = seznamRevizi.Where(x => x.Nazev.Contains(vyhledavanyRetezec));
+    var kdeJeRetezec = db.Revizes.Where(x => x.Nazev.Contains(vyhledavanyRetezec));
     return Results.Json(kdeJeRetezec);
 });
 
 app.Run();
 
+//HOTOVO
+app.MapGet("/revize", (NemocniceDBcontext db) =>
+{
+    //Console.WriteLine(db.Vybavenis.Count());
+
+    return db.Revizes;
+});
 
 
 //record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)

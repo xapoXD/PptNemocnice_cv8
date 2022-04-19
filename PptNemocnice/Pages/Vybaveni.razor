@@ -2,6 +2,7 @@
 @page "/co"
 @inject HttpClient Http
 
+
 @if (!isInNewMode)
 {
     <button @onclick="@(() => {isInNewMode = true; newEntity = new(){IsInEditMode = true, Name="novota" }; })" class="twbtn bg-blue-500 my-2">
@@ -11,9 +12,13 @@
 
 @if (seznamVybaveni == null)
 {
-    <div class="absolute right-1/2 bottom-1/2  transform translate-x-1/2 translate-y-1/2 ">
+ /* <div class="absolute right-1/2 bottom-1/2  transform translate-x-1/2 translate-y-1/2 ">
         <div class=" border-t-transparent border-solid animate-spin  rounded-full border-teal-600 border-8 h-16 w-16"></div>
     </div>
+*/
+    <Loader></Loader>
+
+
     return;
 }
 
