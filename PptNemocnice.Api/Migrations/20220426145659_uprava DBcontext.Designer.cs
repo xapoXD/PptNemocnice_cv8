@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PptNemocnice.Api.Data;
 
@@ -10,9 +11,10 @@ using PptNemocnice.Api.Data;
 namespace PptNemocnice.Api.Migrations
 {
     [DbContext(typeof(NemocniceDBcontext))]
-    partial class NemocniceDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20220426145659_uprava DBcontext")]
+    partial class upravaDBcontext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -50,15 +52,15 @@ namespace PptNemocnice.Api.Migrations
                         new
                         {
                             Id = new Guid("775aee54-29a7-4a4d-8fac-f8c461e2f9e8"),
-                            DateTime = new DateTime(2014, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Nazev = "idk dalsi2",
+                            DateTime = new DateTime(2020, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nazev = "idk dalsi",
                             VybaveniId = new Guid("c58712b5-bbfa-490e-9582-359128cd870e")
                         },
                         new
                         {
                             Id = new Guid("9f659f58-2e09-47cc-a5f2-fefa3a73ef17"),
-                            DateTime = new DateTime(2017, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Nazev = "idk dalsi3",
+                            DateTime = new DateTime(2020, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nazev = "idk dalsi",
                             VybaveniId = new Guid("4b8b4826-bc08-4346-b11f-5636dbdb31e0")
                         });
                 });

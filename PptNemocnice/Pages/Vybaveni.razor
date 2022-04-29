@@ -5,7 +5,7 @@
 
 @if (!isInNewMode)
 {
-    <button @onclick="@(() => {isInNewMode = true; newEntity = new(){IsInEditMode = true, Name="novota" }; })" class="twbtn bg-blue-500 my-2">
+    <button @onclick="@(() => {isInNewMode = true; newEntity = new(){IsInEditMode = true, Name="novypristroj" }; })" class="twbtn bg-blue-500 my-2">
         Přidej nový záznam
     </button>
 }
@@ -16,7 +16,7 @@
         <div class=" border-t-transparent border-solid animate-spin  rounded-full border-teal-600 border-8 h-16 w-16"></div>
     </div>
 */
-    <Loader></Loader>
+    <Loader/>
 
 
     return;

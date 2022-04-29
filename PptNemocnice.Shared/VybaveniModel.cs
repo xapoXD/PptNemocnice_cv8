@@ -16,7 +16,7 @@ public class VybaveniModel
     [Range(1, 10_000_000, ErrorMessage = "{0} musí být v rozsahu {1} až {2} ")]
     public int PriceCzk { get; set; }
     public DateTime BoughtDateTime { get; set; }
-    public DateTime LastRevision { get; set; }
+    public DateTime? LastRevision { get; set; } = null; // zacina bez posledni revize, kdyz se zalozi..
 
     [JsonIgnore]
     public bool NeedsRevision => DateTime.Now - LastRevision > TimeSpan.FromDays(365*2);

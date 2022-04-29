@@ -44,34 +44,55 @@ app.UseHttpsRedirection();
 
 
 //HOTOVO
-app.MapGet("/vybaveni", (NemocniceDBcontext db) =>
+app.MapGet("/vybaveni", (NemocniceDBcontext db, IMapper mapper) =>
 {
-    //Console.WriteLine(db.Vybavenis.Count());
+    var ents = db.Vybavenis.Include(x => x.Revizes);
+   // List<VybaveniModel> models = new();
+    List<DateTime?> models = new();
 
-    return db.Vybavenis;
+    foreach (var aa in ents)
+    {
+        VybaveniModel ent = mapper.Map<VybaveniModel>(aa);//mapovaná na "databázový" typ
+
+        if(ent.LastRevision != null) // && (DateTime.Now - ent.LastRevision) == null
+        {
+            models.Add(ent.LastRevision);
+         //  return ent.LastRevision;
+        }
+        
+    }  
+   // models.Add(ent);
+   // return db.Vybavenis;
+    return models;
 });
 
 
-//HOTOVO
+
 app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 {
    // return seznam.Where(x => !x.NeedsRevision);
 
-    return db.Vybavenis.Where(x => !(DateTime.Now - x.LastRevision > TimeSpan.FromDays(365 * 2)));
+   // return db.Vybavenis.Where(x => !(DateTime.Now - x.LastRevision > TimeSpan.FromDays(365 * 2)));
 });
 
 
-// HOTOVO
-app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db) =>
+// upravit
+app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
-    var item = db.Vybavenis.SingleOrDefault(x => x.Id == Id);
+    var item = db.Vybavenis.Include(x => x.Revizes).SingleOrDefault(x => x.Id == Id);
     if (item == null) return Results.NotFound("takováto entita neexistuje");
-    return Results.Json(item);
+    //todo: specifikovat mapping
+    
+    
+    //VybaveniSRevizemaModel ent = mapper.Map<VybaveniSRevizemaModel>(item);
+
+
+    return Results.Json(mapper.Map<VybaveniSRevizemaModel>(item));
 });
 
 
 
-//HOTOVO
+
 app.MapPost("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
 
@@ -89,7 +110,7 @@ app.MapPost("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IM
 
 
 
-// HOTOVO
+
 app.MapPut("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
     /*
@@ -100,21 +121,16 @@ app.MapPut("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMa
     seznam.Remove(staryZaznam);
     return Results.Ok();
     */
+   
+
     var staryZaznam = db.Vybavenis.SingleOrDefault(x => x.Id == prichoziModel.Id);
-    Vybaveni ent = mapper.Map<Vybaveni>(staryZaznam);
     if (staryZaznam == null) return Results.NotFound("Tento záznam není v seznamu");
-    
-  //  int ind = db.Vybavenis.IndexOf(staryZaznam);
-
-    db.Vybavenis.Add(ent);
-    db.Vybavenis.Remove(staryZaznam);
+    mapper.Map(prichoziModel, staryZaznam);
     db.SaveChanges();
-
     return Results.Ok();
 });
 
 
-//HOTOVO
 app.MapDelete("/vybaveni/{Id}",(Guid Id , NemocniceDBcontext db, IMapper mapper) =>
 {
     var item = db.Vybavenis.SingleOrDefault(x=> x.Id == Id);
@@ -127,7 +143,7 @@ app.MapDelete("/vybaveni/{Id}",(Guid Id , NemocniceDBcontext db, IMapper mapper)
 );
 
 
-//HOTOVO
+
 app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec, NemocniceDBcontext db, IMapper mapper) =>
 {
     if (string.IsNullOrWhiteSpace(vyhledavanyRetezec)) return Results.Problem("Parametr nesmi byt prazdny");
@@ -138,7 +154,7 @@ app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec, Nemocnice
 
 app.Run();
 
-//HOTOVO
+
 app.MapGet("/revize", (NemocniceDBcontext db) =>
 {
     //Console.WriteLine(db.Vybavenis.Count());
@@ -146,8 +162,3 @@ app.MapGet("/revize", (NemocniceDBcontext db) =>
     return db.Revizes;
 });
 
-
-//record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-//{
-//    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-//}
