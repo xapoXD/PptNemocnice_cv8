@@ -108,8 +108,8 @@ app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 //new
 app.MapPost("/revize", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
-
-    Revize ent = mapper.Map<Revize>(prichoziModel);
+    var item = db.Vybavenis.Include(x => x.Revizes);
+    Revize ent = mapper.Map<Revize>(item);
     db.Revizes.Add(ent);
     db.SaveChanges(); // nyni pridano do databaze
 

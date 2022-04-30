@@ -116,7 +116,7 @@ else if(editingItem != null && editingItem.IsInEditMode)
     async Task Revize(VybaveniModel item)
     {
         item.LastRevision = DateTime.Now; 
-        var resp = await Http.PostAsJsonAsync("vybaveni", item);
+        var resp = await Http.PostAsJsonAsync("revize", item);
     }
 
 
