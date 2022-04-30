@@ -47,23 +47,33 @@ app.UseHttpsRedirection();
 app.MapGet("/vybaveni", (NemocniceDBcontext db, IMapper mapper) =>
 {
     var ents = db.Vybavenis.Include(x => x.Revizes);
-   // List<VybaveniModel> models = new();
-    List<DateTime?> models = new();
+    List<VybaveniModel> modelss = new();
+   // List<DateTime?> models = new();
+
 
     foreach (var aa in ents)
     {
         VybaveniModel ent = mapper.Map<VybaveniModel>(aa);//mapovaná na "databázový" typ
 
-        if(ent.LastRevision != null) // && (DateTime.Now - ent.LastRevision) == null
-        {
-            models.Add(ent.LastRevision);
-         //  return ent.LastRevision;
-        }
-        
+      //  DateTime posledni = DateTime.Now - ent.LastRevision;
+
+        aa.Revizes.OrderBy(b => b.DateTime);
+        ent.LastRevision = aa.Revizes.FirstOrDefault()?.DateTime;
+        modelss.Add(ent);
+        //  if (ent.LastRevision != null) // && (DateTime.Now - ent.LastRevision) == null  && posledni < ent.LastRevision
+        //   {
+
+        //     models.Add(ent.LastRevision);
+        //  return ent.LastRevision;
+        //   modelss.Add(ent);
+        //  }
+
     }  
+
+
    // models.Add(ent);
    // return db.Vybavenis;
-    return models;
+    return Results.Json(modelss);
 });
 
 
@@ -79,19 +89,33 @@ app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 // upravit
 app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
+  
+    
     var item = db.Vybavenis.Include(x => x.Revizes).SingleOrDefault(x => x.Id == Id);
     if (item == null) return Results.NotFound("takováto entita neexistuje");
+    // if (item == null) return Results.NotFound("takováto entita neexistuje");
     //todo: specifikovat mapping
-    
-    
-    //VybaveniSRevizemaModel ent = mapper.Map<VybaveniSRevizemaModel>(item);
 
 
-    return Results.Json(mapper.Map<VybaveniSRevizemaModel>(item));
+    VybaveniSRevizemaModel ent = mapper.Map<VybaveniSRevizemaModel>(item);
+      //  var pp = db.Revizes.SingleOrDefault(x => x.Id == Id);
+
+
+    return Results.Json(ent);
 });
 
 
+//new
+app.MapPost("/revize", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
+{
 
+    Revize ent = mapper.Map<Revize>(prichoziModel);
+    db.Revizes.Add(ent);
+    db.SaveChanges(); // nyni pridano do databaze
+
+
+    return Results.Created("/revize", ent.DateTime);
+});
 
 app.MapPost("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {

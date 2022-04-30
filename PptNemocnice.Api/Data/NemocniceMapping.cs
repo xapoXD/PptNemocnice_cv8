@@ -10,6 +10,8 @@ public class NemocniceMapping : Profile
         CreateMap<Vybaveni, VybaveniModel>().ReverseMap();
 
         CreateMap<Revize, RevizeModel>().ReverseMap();
+
+        CreateMap<Vybaveni, VybaveniSRevizemaModel>().ReverseMap();
     }
     
     }

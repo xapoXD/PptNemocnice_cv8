@@ -13,6 +13,8 @@ namespace PptNemocnice.Shared
         public Guid Id { get; set; }
         public string Nazev { get; set; } = "";
 
+        public DateTime DateTime { get; set; }
+
 
         public static List<RevizeModel> NahodnySeznam(int v)
         {

@@ -20,17 +20,24 @@
  @foreach (var item in seznamVybaveni)
     {
         @if(Id == item.Id) {
+
         <div class="grid grid-cols-2"> 
         <div>Název</div>
-        <div>@item.Name</div>
+        <div>@item.Nazev</div>
         <div>Id</div>
         <div>@item.Id</div>
         <div>Datum Koupe</div>
-        <div>@item.BoughtDateTime</div>
-        <div>Datum Posledni revize</div>
-        <div>@item.LastRevision</div>
+        <div>@item.DateTime</div>
         <div>Cena [czk]</div>
         <div>@item.PriceCzk</div>
+        <div>Datum Posledni revize</div>
+
+         @foreach (var boom in item.Revizes)
+         {
+            <div>@boom.DateTime</div>
+         }
+                
+
         </div>
         }
 
@@ -40,11 +47,11 @@
 
     [Parameter] public Guid Id { get; set; }
 
-    List<VybaveniModel>? seznamVybaveni;
+    List<VybaveniSRevizemaModel>? seznamVybaveni;
 
 	protected override async Task OnInitializedAsync()
     {
-        seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
+        seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniSRevizemaModel>?>("vybaveni");
 
     }
 
