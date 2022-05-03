@@ -14,7 +14,7 @@ namespace PptNemocnice.Shared
 
             public DateTime DateTime { get; set; }
 
-            public Guid VybaveniId { get; set; }
+         
 
             public List<RevizeModel> Revizes { get; set; } = new();
 

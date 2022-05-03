@@ -32,11 +32,15 @@
         <div>@item.PriceCzk</div>
         <div>Datum Posledni revize</div>
 
-         @foreach (var boom in item.Revizes)
-         {
-            <div>@boom.DateTime</div>
-         }
-                
+        
+              
+         <div class="col-span-2">Revize:
+
+     @foreach(var rev in item.Revizes)
+        {
+            <div> Nazev: @rev.Nazev Datum a cas: @rev.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</div>
+        }
+    </div>
 
         </div>
         }

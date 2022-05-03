@@ -5,13 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<NemocniceDBcontext>(opt => opt.UseSqlite("FileName=Nemocnice.db"));
 
 
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());  
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 
 
 
@@ -28,8 +30,7 @@ builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(policy =>
 var app = builder.Build();
 app.UseCors();
 
-app.MapGet("/", () => "Hello");
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -43,38 +44,43 @@ app.UseHttpsRedirection();
 
 
 
-//HOTOVO
-app.MapGet("/vybaveni", (NemocniceDBcontext db, IMapper mapper) =>
-{
-    var ents = db.Vybavenis.Include(x => x.Revizes);
-    List<VybaveniModel> modelss = new();
-   // List<DateTime?> models = new();
+//JE TO PREDELANY JINAM
 
 
-    foreach (var aa in ents)
-    {
-        VybaveniModel ent = mapper.Map<VybaveniModel>(aa);//mapovaná na "databázový" typ
-
-      //  DateTime posledni = DateTime.Now - ent.LastRevision;
-
-        aa.Revizes.OrderBy(b => b.DateTime);
-        ent.LastRevision = aa.Revizes.FirstOrDefault()?.DateTime;
-        modelss.Add(ent);
-        //  if (ent.LastRevision != null) // && (DateTime.Now - ent.LastRevision) == null  && posledni < ent.LastRevision
-        //   {
-
-        //     models.Add(ent.LastRevision);
-        //  return ent.LastRevision;
-        //   modelss.Add(ent);
-        //  }
-
-    }  
+//app.MapGet("/vybaveni", (NemocniceDBcontext db, IMapper mapper) =>
+//{
+//    var ents = db.Vybavenis.Include(x => x.Revizes);
+//    List<VybaveniModel> modelss = new();
+//   // List<DateTime?> models = new();
 
 
-   // models.Add(ent);
-   // return db.Vybavenis;
-    return Results.Json(modelss);
-});
+//    foreach (var aa in ents)
+//    {
+//        var ent = mapper.Map<VybaveniModel>(aa);//mapovaná na "databázový" typ
+
+//      //  DateTime poslvaredni = DateTime.Now - ent.LastRevision;
+//      /*
+//        aa.Revizes.OrderBy(b => b.DateTime);
+//        ent.LastRevision = aa.Revizes.FirstOrDefault()?.DateTime;7
+//      */
+//        ent.LastRevision = aa.Revizes.OrderByDescending(x => x.DateTime).FirstOrDefault()?.DateTime;
+
+//        modelss.Add(ent);
+//        //  if (ent.LastRevision != null) // && (DateTime.Now - ent.LastRevision) == null  && posledni < ent.LastRevision
+//        //   {
+
+//        //     models.Add(ent.LastRevision);
+//        //  return ent.LastRevision;
+//        //   modelss.Add(ent);
+//        //  }
+
+//    }  
+
+
+//   // models.Add(ent);
+//   // return db.Vybavenis;
+//    return Results.Json(modelss);
+//});
 
 
 
@@ -86,7 +92,7 @@ app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 });
 
 
-// upravit
+// detail
 app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
   
@@ -106,16 +112,27 @@ app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 
 
 //new
-app.MapPost("/revize", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
+app.MapPost("/revize", (RevizeModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
-    var item = db.Vybavenis.Include(x => x.Revizes);
-    Revize ent = mapper.Map<Revize>(item);
-    db.Revizes.Add(ent);
-    db.SaveChanges(); // nyni pridano do databaze
+    /* var item = db.Vybavenis.Include(x => x.Revizes);
+     Revize ent = mapper.Map<Revize>(item);
+     db.Revizes.Add(ent);
+     db.SaveChanges(); // nyni pridano do databaze
 
 
-    return Results.Created("/revize", ent.DateTime);
+     return Results.Created("/revize", ent.DateTime); */
+
+
+    prichoziModel.Id = Guid.Empty;//vynuluju id, db si idèka ošéfuje sama
+    prichoziModel.DateTime = DateTime.UtcNow;
+    Revize ent = mapper.Map<Revize>(prichoziModel);//mapovaná na "databázový" typ
+    db.Revizes.Add(ent);//pøidání do db
+    db.SaveChanges();//uložení db (v tuto chvíli se vytvoøí id)
+
+    return Results.Created("/revize", ent.Id);
 });
+
+
 
 app.MapPost("/vybaveni", (VybaveniModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
@@ -166,7 +183,12 @@ app.MapDelete("/vybaveni/{Id}",(Guid Id , NemocniceDBcontext db, IMapper mapper)
 }
 );
 
+app.MapGet("/revize", (NemocniceDBcontext db) =>
+{
+    //Console.WriteLine(db.Vybavenis.Count());
 
+    return db.Revizes;
+});
 
 app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec, NemocniceDBcontext db, IMapper mapper) =>
 {
@@ -176,13 +198,10 @@ app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec, Nemocnice
     return Results.Json(kdeJeRetezec);
 });
 
+app.MapControllers();
+
 app.Run();
 
 
-app.MapGet("/revize", (NemocniceDBcontext db) =>
-{
-    //Console.WriteLine(db.Vybavenis.Count());
 
-    return db.Revizes;
-});
 

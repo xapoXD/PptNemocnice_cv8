@@ -24,7 +24,7 @@
         <td class="flex gap-1">
             <button @onclick="() => DeleteItemCallback.InvokeAsync()" class="bg-red-400 twbtn">X</button>
 
-            <button @onclick="() => Revize(Item)" class="bg-blue-400 twbtn">Provést revizi</button>
+            <button @onclick="() => Revize()" class="bg-blue-400 twbtn">Provést revizi</button>
 
             <button @onclick="() => TurnOnEdit()" class="twbtn bg-amber-300">✏️</button>
 
@@ -113,10 +113,17 @@ else if(editingItem != null && editingItem.IsInEditMode)
 
 
 
-    async Task Revize(VybaveniModel item)
+    async Task Revize()
     {
-        item.LastRevision = DateTime.Now; 
-        var resp = await Http.PostAsJsonAsync("revize", item);
+     /*   item.LastRevision = DateTime.Now; 
+        var resp = await Http.PostAsJsonAsync("revize", item); */
+
+        RevizeModel novaRevize = new() { Nazev = "Nova revize", VybaveniId= Item!.Id};
+        var resp = await Http.PostAsJsonAsync("revize", novaRevize);
+        if (!resp.IsSuccessStatusCode) return;
+
+      //  novaRevize.Id = await resp.Content.ReadFromJsonAsync<Guid>();
+        Item.LastRevision = novaRevize.DateTime;
     }
 
 
