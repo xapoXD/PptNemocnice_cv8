@@ -118,7 +118,7 @@ else if(editingItem != null && editingItem.IsInEditMode)
      /*   item.LastRevision = DateTime.Now; 
         var resp = await Http.PostAsJsonAsync("revize", item); */
 
-        RevizeModel novaRevize = new() { Nazev = "Nova revize", VybaveniId= Item!.Id};
+        RevizeModel novaRevize = new() { Nazev = "Nova revize", VybaveniId= Item!.Id, DateTime = DateTime.Now};
         var resp = await Http.PostAsJsonAsync("revize", novaRevize);
         if (!resp.IsSuccessStatusCode) return;
 

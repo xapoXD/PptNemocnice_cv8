@@ -124,7 +124,7 @@ app.MapPost("/revize", (RevizeModel prichoziModel, NemocniceDBcontext db, IMappe
 
 
     prichoziModel.Id = Guid.Empty;//vynuluju id, db si idèka ošéfuje sama
-    prichoziModel.DateTime = DateTime.UtcNow;
+  //  prichoziModel.DateTime = DateTime.UtcNow;
     Revize ent = mapper.Map<Revize>(prichoziModel);//mapovaná na "databázový" typ
     db.Revizes.Add(ent);//pøidání do db
     db.SaveChanges();//uložení db (v tuto chvíli se vytvoøí id)

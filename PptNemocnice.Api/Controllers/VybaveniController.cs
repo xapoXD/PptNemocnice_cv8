@@ -8,7 +8,7 @@ using PptNemocnice.Shared;
 
 namespace PptNemocnice.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
 
 

@@ -16,7 +16,7 @@ namespace PptNemocnice.Shared
         public DateTime DateTime { get; set; }
 
         public Guid VybaveniId { get; set; }
-
+/*
         public static List<RevizeModel> NahodnySeznam(int v)
         {
             List<RevizeModel> list = new();
@@ -28,7 +28,7 @@ namespace PptNemocnice.Shared
             }
             return list;
         }
-
+*/
 
     }
 }

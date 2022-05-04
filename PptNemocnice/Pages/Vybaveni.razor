@@ -61,7 +61,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
+        try
+        {
+            seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
     }
 
 
