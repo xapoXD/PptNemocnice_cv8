@@ -18,7 +18,6 @@
 */
     <Loader/>
 
-
     return;
 }
 
@@ -50,6 +49,9 @@
         <VybaveniRow EditDoneCallback="async (success) => {if(success) await UpdateEntity(item);}" Item=item DeleteItemCallback="() => DeleteVybaveni(item)" />
     }
 </table>
+
+    
+
 
 @code {
 

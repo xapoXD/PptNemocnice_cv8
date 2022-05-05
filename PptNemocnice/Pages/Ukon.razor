@@ -1,0 +1,146 @@
+﻿@page "/ukon/{Id:guid}"
+@inject HttpClient Http
+
+@if (item == null)
+{
+     <Loader/>
+    return;
+}
+
+<h1>Úkony pro vybavení: @item.Nazev</h1>
+
+@if (!isInNewMode)
+{
+    <button @onclick="@(() => {isInNewMode = true; newEntity = new() { IsInEditMode = true, Name="nazev ukonu" }; })" class="twbtn bg-green-500 my-2">
+        Přidej nový záznam
+    </button>
+}
+
+<table class="w-full">
+
+    <thead class="border-b-2 border-slate-500">
+        <tr>
+            <th>Název</th>
+            <th>Datum a čas</th>
+            <th>Pacient: Jméno</th>
+            <th>Pacient: Příjmení</th>
+            <th class="flex gap-3">Id</th>
+        </tr>
+    </thead>
+    
+     @foreach(var rev in item.Ukons)
+        {
+           <tr>
+            <th> @rev.Name </th>
+                
+            <th> @rev.UkonDateTime.ToString("yyyy-MM-dd HH:mm:ss") </th>
+
+            <th> @rev.JmenoPacient </th>
+
+            <th> @rev.PrijmeniPacient </th>
+
+            <th class="flex gap-1">
+            <button  class="bg-red-400 twbtn">X</button>
+            <button  class="twbtn bg-amber-300">✏️</button>  
+            </th>
+            
+            <th> @rev.Id</th>
+
+            </tr>
+        }
+
+
+
+    @if (isInNewMode && newEntity != null)
+    {
+        <tr class="px-2 py-1 border-2 border-slate-600">
+            <td colspan="6">
+                <EditForm Model=newEntity OnValidSubmit="() => isInNewMode = false">
+                    <DataAnnotationsValidator />
+
+
+                    @*<ValidationSummary />*@
+                    <table>
+                        <tr>
+                            <td>
+                                <InputText class="border-2 border-slate-300" @bind-Value=@newEntity.Name>
+                                </InputText>   
+                            </td>
+                            <td>  <InputDate class="border-2 border-slate-300" @bind-Value=@newEntity.UkonDateTime>
+                                </InputDate> 
+                            </td>
+
+                            <td> 
+                                <InputText class="border-2 border-slate-300" @bind-Value=@newEntity.JmenoPacient>
+                                </InputText> 
+                            </td>
+
+                            <td> <InputText class="border-2 border-slate-300" @bind-Value=@newEntity.PrijmeniPacient>
+                                </InputText>     
+
+                            </td>
+
+                            <td class="flex gap-1">
+
+                                <button @onclick="() => AddEntity(newEntity)" class="bg-green-500 twbtn">Přidej</button>
+
+                                <button type="button" @onclick="() => isInNewMode = false" class="twbtn bg-red-500">Zrušit</button>
+
+                            </td>
+                        </tr>
+                    </table>
+                </EditForm>
+            </td>
+        </tr>
+
+    }
+
+         
+
+</table>
+
+
+@code {
+
+    bool isInNewMode;
+    UkonModel? newEntity;
+
+
+    [Parameter] public Guid Id { get; set; }
+
+    VybaveniSRevizemaModel? item;
+
+    List<UkonModel>? seznamUkonu;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        item = await Http.GetFromJsonAsync<VybaveniSRevizemaModel>($"ukon/{Id}");
+
+
+        try
+        {
+            seznamUkonu = await Http.GetFromJsonAsync<List<UkonModel>?>("ukon");
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+    }
+
+   
+    async Task AddEntity(UkonModel item)
+    {
+       // seznamVybaveni?.Add(item);
+
+        var resp = await Http.PostAsJsonAsync("ukon", item);
+        if (!resp.IsSuccessStatusCode) return;
+
+        item.Id = await resp.Content.ReadFromJsonAsync<Guid>();
+        seznamUkonu?.Insert(0, item);
+    }
+
+
+}

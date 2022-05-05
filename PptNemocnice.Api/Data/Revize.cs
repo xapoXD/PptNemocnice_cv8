@@ -10,5 +10,7 @@
         public Guid VybaveniId { get; set; }
         public Vybaveni Vybaveni { get; set; } = null!;
 
+
+      
     }
 }

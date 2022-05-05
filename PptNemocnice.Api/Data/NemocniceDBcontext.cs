@@ -36,9 +36,21 @@ public class NemocniceDBcontext : DbContext
             new Revize() { Id = new Guid("775aee54-29a7-4a4d-8fac-f8c461e2f9e8"), VybaveniId = idVybaveni2, Nazev = "idk dalsi2", DateTime = d2 },
             new Revize() { Id = new Guid("9f659f58-2e09-47cc-a5f2-fefa3a73ef17"), VybaveniId = idVybaveni3, Nazev = "idk dalsi3", DateTime = d3 }
             );
+
+        Guid idUkon = new Guid("148bf078-5d39-47ef-a465-889ede7d2062");
+        Guid idUkon2 = new Guid("d72872dc-47d4-4f5c-95a3-78c50c936c25");
+        Guid idUkon3 = new Guid("f136bbaa-faa7-4343-b29e-9887c767b265");
+
+        builder.Entity<Ukon>().HasData(
+            new Ukon() { Id = idUkon , VybaveniId = idVybaveni , Name = "scan"     , UkonDateTime = d , JmenoPacient = "Johnny", PrijmeniPacient = "Karasek"},
+            new Ukon() { Id = idUkon2, VybaveniId = idVybaveni2, Name = "probmemek", UkonDateTime = d2, JmenoPacient = "Paul"  , PrijmeniPacient = "Puta"   },
+            new Ukon() { Id = idUkon3, VybaveniId = idVybaveni3, Name = "profiscan", UkonDateTime = d3, JmenoPacient = "Dave"  , PrijmeniPacient = "Paid"   }
+            );
     }
 
     public DbSet<Vybaveni> Vybavenis => Set<Vybaveni>();
 
     public DbSet<Revize> Revizes => Set<Revize>();
+
+    public DbSet<Ukon> Ukons => Set<Ukon>();
 }

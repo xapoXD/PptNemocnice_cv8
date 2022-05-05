@@ -6,7 +6,7 @@
 
 <PageTitle>Detail vybaveni</PageTitle>
 
-@if (seznamVybaveni == null)
+@if (item == null)
 {
  /*   <div class="absolute right-1/2 bottom-1/2  transform translate-x-1/2 translate-y-1/2 ">
         <div class=" border-t-transparent border-solid animate-spin  rounded-full border-teal-600 border-8 h-16 w-16"></div>
@@ -17,24 +17,18 @@
     return;
 }
 
- @foreach (var item in seznamVybaveni)
-    {
-        @if(Id == item.Id) {
+<div class="grid grid-cols-2 max-w-md"> 
 
-        <div class="grid grid-cols-2"> 
-        <div>Název</div>
-        <div>@item.Nazev</div>
-        <div>Id</div>
-        <div>@item.Id</div>
-        <div>Datum Koupe</div>
-        <div>@item.DateTime</div>
-        <div>Cena [czk]</div>
-        <div>@item.PriceCzk</div>
-        <div>Datum poslední revize</div>
+  <div class="bg-blue-400 ">Název</div>
+  <div class="bg-red-500">@item.Nazev</div>
 
-        
-              
-         <div class="col-span-2">Revize:
+   <div class="bg-blue-400">Cena</div>
+  <div class="bg-red-500">@item.PriceCzk</div>
+
+   <div class="bg-blue-400">Nakoupeno</div>
+  <div class="bg-red-500">@item.DateTime.ToString("yyyy-MM-dd")</div>
+
+   <div class="col-span-2">Revize:
 
      @foreach(var rev in item.Revizes)
         {
@@ -42,23 +36,48 @@
         }
     </div>
 
-        </div>
-        }
+     <div class="col-span-2">Ukony:
 
-    }
+     @foreach(var rev in item.Ukons)
+        {
+            <div> Nazev: @rev.Name </div>
+                
+            <div> Datum a cas: @rev.UkonDateTime.ToString("yyyy-MM-dd HH:mm:ss") </div>
+
+            <div> Pacient: @rev.JmenoPacient @rev.PrijmeniPacient </div>
+
+            <div> Id Ukonu: @rev.Id</div>
+        }
+    </div>
+
+     </div>
+
+    
+
+    
 
 @code {
 
     [Parameter] public Guid Id { get; set; }
 
-    List<VybaveniSRevizemaModel>? seznamVybaveni;
+  
+
+    VybaveniSRevizemaModel? item;
 
 	protected override async Task OnInitializedAsync()
     {
-        seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniSRevizemaModel>?>("vybaveni");
+        
+           // seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
+
+         //   seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniSRevizemaModel>?>("vybaveni");
+
+            item = await Http.GetFromJsonAsync<VybaveniSRevizemaModel>($"vybaveni/{Id}");
+
+        
 
     }
 
+    
 
 
 }

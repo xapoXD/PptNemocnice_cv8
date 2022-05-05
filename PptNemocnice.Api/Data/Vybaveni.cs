@@ -12,6 +12,6 @@
 
         public List<Revize> Revizes { get; set; } = new();
 
-
+        public List<Ukon> Ukons { get; set; } = new();
     }
 }

@@ -26,7 +26,9 @@
 
             <button @onclick="() => Revize()" class="bg-blue-400 twbtn">Provést revizi</button>
 
-            <button @onclick="() => TurnOnEdit()" class="twbtn bg-amber-300">✏️</button>
+            <button @onclick="() => TurnOnEdit()" class="twbtn bg-amber-300">✏️</button>  
+
+            <button  @onclick="() => Ukon(Item.Id)" class="bg-green-400 twbtn">Úkony</button> 
 
             <button @onclick="() => Detail(Item.Id)" class="oi oi-arrow-thick-right">Detail</button>
             
@@ -40,7 +42,7 @@ else if(editingItem != null && editingItem.IsInEditMode)
         <td colspan="6">
            <EditForm Model=editingItem OnValidSubmit="() => TurnOffEdit(true)">
             <DataAnnotationsValidator />
-            @*<ValidationSummary />*@
+          @*<ValidationSummary />*@
             <table>
                 <tr>
                     <td><InputText class="border-2 border-slate-300" @bind-Value=@editingItem.Name />
@@ -73,7 +75,8 @@ else if(editingItem != null && editingItem.IsInEditMode)
         </td>
     </tr>
 
-}
+} 
+
 
 @code {
 
@@ -111,8 +114,14 @@ else if(editingItem != null && editingItem.IsInEditMode)
         EditDoneCallback.InvokeAsync(success);
     }
 
+    
+    private void Ukon(Guid args)
+    {
+        UriHelper.NavigateTo("ukon/" + args);
+    }
 
 
+    // update revize
     async Task Revize()
     {
      /*   item.LastRevision = DateTime.Now; 
@@ -129,17 +138,18 @@ else if(editingItem != null && editingItem.IsInEditMode)
 
     private void Detail(Guid args)
     {
-
         UriHelper.NavigateTo("vybaveni/" + args);
-
     }
-        
+       
+    
+
+
         VybaveniModel? editingItem;
 
     [Parameter] public EventCallback DeleteItemCallback { get; set; }
     [Parameter] public EventCallback<bool> EditDoneCallback { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-
+   
 
 }

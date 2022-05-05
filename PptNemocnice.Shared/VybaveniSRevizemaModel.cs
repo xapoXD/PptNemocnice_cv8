@@ -13,11 +13,12 @@ namespace PptNemocnice.Shared
             public string Nazev { get; set; } = string.Empty;
 
             public DateTime DateTime { get; set; }
-
-         
+ 
 
             public List<RevizeModel> Revizes { get; set; } = new();
 
             public int PriceCzk { get; set; }
-    }
+
+            public List<UkonModel> Ukons { get; set; } = new();
+        }
 }
