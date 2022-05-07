@@ -79,7 +79,7 @@ else if(editingItem != null && editingItem.IsInEditMode)
 
 
 @code {
-
+    VybaveniModel? editingItem;
     VybaveniModel? _Item;
     [Parameter]
     public VybaveniModel? Item
@@ -144,7 +144,7 @@ else if(editingItem != null && editingItem.IsInEditMode)
     
 
 
-        VybaveniModel? editingItem;
+        
 
     [Parameter] public EventCallback DeleteItemCallback { get; set; }
     [Parameter] public EventCallback<bool> EditDoneCallback { get; set; }

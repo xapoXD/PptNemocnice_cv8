@@ -22,7 +22,8 @@ namespace PptNemocnice.Shared
         public Guid VybaveniId { get; set; }
 
 
-       public bool IsInEditMode { get; set; }
+       public bool IsInNewMode { get; set; }
 
+     //   public bool IsInEditMode2 { get; set; }
     }
 }

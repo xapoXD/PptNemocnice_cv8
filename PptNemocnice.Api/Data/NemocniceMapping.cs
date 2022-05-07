@@ -15,7 +15,6 @@ public class NemocniceMapping : Profile
 
         CreateMap<Ukon, UkonModel>().ReverseMap();
 
-        CreateMap<Ukon, VybaveniSRevizemaModel>();
     }
     
     }

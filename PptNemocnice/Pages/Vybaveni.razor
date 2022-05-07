@@ -84,6 +84,8 @@
             seznamVybaveni?.Remove(item);
     }
 
+
+
     async Task AddEntity(VybaveniModel item)
     {
         var resp = await Http.PostAsJsonAsync("vybaveni", item);

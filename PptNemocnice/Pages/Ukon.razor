@@ -11,10 +11,20 @@
 
 @if (!isInNewMode)
 {
-    <button @onclick="@(() => {isInNewMode = true; newEntity = new() { IsInEditMode = true, Name="nazev ukonu" }; })" class="twbtn bg-green-500 my-2">
+    <button @onclick="@(() => {isInNewMode = true; newEntity = new() { IsInNewMode = true, Name="nazev ukonu" }; })" class="twbtn bg-green-500 my-2">
         Přidej nový záznam
     </button>
 }
+
+@if (!isInEditMode)
+{
+        <button  class="twbtn bg-amber-500 my-2" @onclick="() => EditMod()" >✏️</button> 
+}else
+{ 
+    <button type="button" @onclick="() => isInEditMode = false" class="twbtn bg-red-500">Zrušit</button> 
+}
+
+
 
 <table class="w-full">
 
@@ -27,10 +37,64 @@
             <th class="flex gap-3">Id</th>
         </tr>
     </thead>
-    
-     @foreach(var rev in item.Ukons)
+
+  @if(seznamUkonu != null){
+     @foreach(var rev in seznamUkonu)
         {
-           <tr>
+             @if(rev.Name != null )
+            {
+                Zaloha = rev.VybaveniId;
+                    edit = rev;
+                }
+
+         
+        if (isInEditMode && edit != null)
+        {
+        <tr class="px-2 py-1 border-2 border-slate-600">
+            <td colspan="6">
+
+                <EditForm Model=edit OnValidSubmit="() => isInEditMode = false">
+                    <DataAnnotationsValidator />
+
+                    @*<ValidationSummary />*@
+                    <table>
+                        <tr>
+                            <td>
+                                <InputText class="border-2 border-slate-300" @bind-Value=@edit.Name>
+                                </InputText>   
+                            </td>
+                            <td>  <InputDate class="border-2 border-slate-300" @bind-Value=@edit.UkonDateTime>
+                                </InputDate> 
+                            </td>
+
+                            <td> 
+                                <InputText class="border-2 border-slate-300" @bind-Value=@edit.JmenoPacient>
+                                </InputText> 
+                            </td>
+
+                            <td> <InputText class="border-2 border-slate-300" @bind-Value=@edit.PrijmeniPacient>
+                                </InputText>     
+
+                            </td>
+
+                            <td class="flex gap-1">
+
+                                <button type="button" @onclick="() => UpdateEntity(edit)" class="bg-green-500 twbtn">OK</button>
+
+                                <button type="button" @onclick="() => isInEditMode = false" class="twbtn bg-red-500">Zrušit</button>
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </EditForm>
+
+            </td>
+        </tr>
+
+            }else {
+
+                <tr>
             <th> @rev.Name </th>
                 
             <th> @rev.UkonDateTime.ToString("yyyy-MM-dd HH:mm:ss") </th>
@@ -40,24 +104,33 @@
             <th> @rev.PrijmeniPacient </th>
 
             <th class="flex gap-1">
-            <button  class="bg-red-400 twbtn">X</button>
-            <button  class="twbtn bg-amber-300">✏️</button>  
+            <button  class="bg-red-400 twbtn" @onclick="() => DeleteUkon(rev)">X</button>
+            <button  class="twbtn bg-amber-300" @onclick="() => EditMod()" >✏️</button>  
             </th>
             
             <th> @rev.Id</th>
 
-            </tr>
-        }
+           
+         </tr>
 
+
+            }
+
+
+   }
+  }
+
+
+        
 
 
     @if (isInNewMode && newEntity != null)
     {
         <tr class="px-2 py-1 border-2 border-slate-600">
             <td colspan="6">
+
                 <EditForm Model=newEntity OnValidSubmit="() => isInNewMode = false">
                     <DataAnnotationsValidator />
-
 
                     @*<ValidationSummary />*@
                     <table>
@@ -89,7 +162,9 @@
                             </td>
                         </tr>
                     </table>
+
                 </EditForm>
+
             </td>
         </tr>
 
@@ -103,8 +178,14 @@
 @code {
 
     bool isInNewMode;
-    UkonModel? newEntity;
 
+    bool isInEditMode;
+    UkonModel? newEntity;
+    //    UkonModel _Item;
+
+    UkonModel? edit;
+
+    Guid Zaloha;
 
     [Parameter] public Guid Id { get; set; }
 
@@ -117,30 +198,43 @@
     {
         item = await Http.GetFromJsonAsync<VybaveniSRevizemaModel>($"ukon/{Id}");
 
-
-        try
-        {
-            seznamUkonu = await Http.GetFromJsonAsync<List<UkonModel>?>("ukon");
-
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
+        seznamUkonu = item?.Ukons;
 
     }
 
-   
+
     async Task AddEntity(UkonModel item)
     {
-       // seznamVybaveni?.Add(item);
+        item.VybaveniId = Zaloha;
 
         var resp = await Http.PostAsJsonAsync("ukon", item);
         if (!resp.IsSuccessStatusCode) return;
 
         item.Id = await resp.Content.ReadFromJsonAsync<Guid>();
-        seznamUkonu?.Insert(0, item);
+        seznamUkonu?.Insert(0, item);   
     }
 
 
+
+    async Task DeleteUkon(UkonModel item)
+    {
+        var resp = await Http.DeleteAsync($"ukon/{item.Id}");
+
+        if (resp.IsSuccessStatusCode)
+            seznamUkonu?.Remove(item);
+    }
+
+
+    async Task UpdateEntity(UkonModel item)
+    {
+        isInEditMode = false;
+        var resp = await Http.PutAsJsonAsync("ukon", item);
+    }
+
+
+    public void EditMod ()
+    {
+        isInEditMode = true;
+
+    }
 }
