@@ -83,23 +83,23 @@ app.UseHttpsRedirection();
 //});
 
 
-
+/*
 app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 {
    // return seznam.Where(x => !x.NeedsRevision);
 
    // return db.Vybavenis.Where(x => !(DateTime.Now - x.LastRevision > TimeSpan.FromDays(365 * 2)));
 });
-
+*/
 
 // detail + ukon added
 app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
   
     
-    var item = db.Vybavenis.Include(x => x.Revizes).SingleOrDefault(x => x.Id == Id);
+    var item = db.Vybavenis.Include(x => x.Revizes).Include(x => x.Ukons).SingleOrDefault(x => x.Id == Id);
 
-     item = db.Vybavenis.Include(x => x.Ukons).SingleOrDefault(x => x.Id == Id);
+  //   item = db.Vybavenis.Include(x => x.Ukons).SingleOrDefault(x => x.Id == Id);
 
     if (item == null) return Results.NotFound("takováto entita neexistuje");
     // if (item == null) return Results.NotFound("takováto entita neexistuje");
@@ -230,6 +230,8 @@ app.MapDelete("/vybaveni/{Id}",(Guid Id , NemocniceDBcontext db, IMapper mapper)
     return Results.Ok();
 }
 );
+
+
 
 app.MapGet("/revize", (NemocniceDBcontext db) =>
 {
