@@ -92,6 +92,8 @@ app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 });
 */
 
+app.MapGet("/", () => "Heloou");
+
 // detail + ukon added
 app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
