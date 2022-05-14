@@ -16,5 +16,6 @@
 
         public Vybaveni Vybaveni { get; set; } = null!;
 
+      //  public DateTime VybaveniDateTime { get; set; };
     }
 }

@@ -28,7 +28,12 @@
 
             <button @onclick="() => TurnOnEdit()" class="twbtn bg-amber-300">✏️</button>  
 
-            <button  @onclick="() => Ukon(Item.Id)" class="bg-green-400 twbtn">Úkony</button> 
+            @if(DateTime.Now - Item.LastRevision > TimeSpan.FromDays(365*2)) {
+            <button disabled @onclick="() => Ukon(Item.Id)" class="bg-red-400 twbtn">Úkony</button> 
+                           
+            }else {
+                <button @onclick="() => Ukon(Item.Id)" class="bg-green-400 twbtn">Úkony</button> 
+                  }       
 
             <button @onclick="() => Detail(Item.Id)" class="oi oi-arrow-thick-right">Detail</button>
             

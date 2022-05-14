@@ -24,6 +24,6 @@ namespace PptNemocnice.Shared
 
        public bool IsInNewMode { get; set; }
 
-     //   public bool IsInEditMode2 { get; set; }
+       //public DateTime VybaveniDateTime { get; set; };
     }
 }

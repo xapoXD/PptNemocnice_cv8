@@ -27,8 +27,11 @@
 
    <div class="bg-blue-400">Nakoupeno</div>
   <div class="bg-red-500">@item.DateTime.ToString("yyyy-MM-dd")</div>
-
+        
+         <button @onclick="() => Revize()" class="bg-green-400 twbtn">Provést revizi</button>
+    
    <div class="col-span-2">Revize:
+
 
      @foreach(var rev in item.Revizes)
         {
@@ -60,24 +63,33 @@
 
     [Parameter] public Guid Id { get; set; }
 
-  
+    // public VybaveniModel? Item;
 
     VybaveniSRevizemaModel? item;
 
-	protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        
-           // seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
 
-         //   seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniSRevizemaModel>?>("vybaveni");
+        // seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniModel>?>("vybaveni");
 
-            item = await Http.GetFromJsonAsync<VybaveniSRevizemaModel>($"vybaveni/{Id}");
+        //   seznamVybaveni = await Http.GetFromJsonAsync<List<VybaveniSRevizemaModel>?>("vybaveni");
 
-        
+        item = await Http.GetFromJsonAsync<VybaveniSRevizemaModel>($"vybaveni/{Id}");
+
+
 
     }
 
-    
+    async Task Revize()
+    {
 
+        RevizeModel novaRevize = new() { Nazev = "Nova revize z detailu", VybaveniId= Id, DateTime = DateTime.Now};
+        var resp = await Http.PostAsJsonAsync("revize", novaRevize);
+        if (!resp.IsSuccessStatusCode) return;
+
+        item?.Revizes.Add(novaRevize);
+
+        //Item.LastRevision = novaRevize.DateTime;
+    }
 
 }

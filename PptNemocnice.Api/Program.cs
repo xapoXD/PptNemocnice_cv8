@@ -94,7 +94,8 @@ app.MapGet("/vybaveni/jensrevizi", (int c, NemocniceDBcontext db) =>
 
 app.MapGet("/", () => "Heloou");
 
-// detail + ukon added
+
+
 app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
   
@@ -115,7 +116,7 @@ app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
     return Results.Json(ent);
 });
 
-//NEW
+
 app.MapGet("/ukon/{Id}", (Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
    var item = db.Vybavenis.Include(x => x.Ukons).SingleOrDefault(x => x.Id == Id);
@@ -127,21 +128,67 @@ app.MapGet("/ukon/{Id}", (Guid Id, NemocniceDBcontext db, IMapper mapper) =>
     return Results.Json(ent);
 });
 
+
 /// NEW ---
 app.MapPost("/ukon", (UkonModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
+   // bool pridej = true;
 
     prichoziModel.Id = Guid.Empty;
-
     Ukon ent = mapper.Map<Ukon>(prichoziModel);
+
+    //   List<VybaveniSRevizemaModel> list = new List<VybaveniSRevizemaModel>();
+    /*   Guid pablo;
+       pablo = ent.VybaveniId;
+
+       foreach (var item in list)
+       {
+
+       }
+      */
+
+
+    /*
+       List<Revize>? revizeee = new();
+
+       revizeee = ent.Vybaveni.Revizes;
+
+           if (revizeee != null)
+           {
+               foreach (var revize in revizeee)
+               {
+
+                   if (DateTime.Now - revize.DateTime > TimeSpan.FromDays(365 * 2))
+                   {
+                       //nepridej
+                       pridej = false;
+                   }
+                   else
+                   {
+                       pridej = true;
+                       //pridej
+                   }
+               }
+           }
+
+
+           if(pridej == true) {
+               db.Ukons.Add(ent);
+               db.SaveChanges(); // nyni pridano do databaze
+               return Results.Created("/ukon", ent.Id);
+           }
+           else return Results.Problem("K tomuto vybavení nelze pøidat úkon z dùvodu staré revize vybavení!!");
+
+
+       */
     db.Ukons.Add(ent);
     db.SaveChanges(); // nyni pridano do databaze
+    return Results.Created("/ukon", ent.Id); 
 
-
-    return Results.Created("/ukon", ent.Id);
 });
 
-// NEW
+
+
 app.MapDelete("/ukon/{Id}", (Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
     var item = db.Ukons.SingleOrDefault(x => x.Id == Id);
@@ -153,7 +200,7 @@ app.MapDelete("/ukon/{Id}", (Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 }
 );
 
-//NEW
+
 app.MapPut("/ukon", (UkonModel prichoziModel, NemocniceDBcontext db, IMapper mapper) =>
 {
   
