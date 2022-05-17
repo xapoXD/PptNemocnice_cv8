@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PptNemocnice.Api.Data;
 
@@ -10,9 +11,10 @@ using PptNemocnice.Api.Data;
 namespace PptNemocnice.Api.Migrations
 {
     [DbContext(typeof(NemocniceDBcontext))]
-    partial class NemocniceDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20220517133802_pracovniks")]
+    partial class pracovniks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -105,10 +107,6 @@ namespace PptNemocnice.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Kod")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -139,7 +137,6 @@ namespace PptNemocnice.Api.Migrations
                         {
                             Id = new Guid("148bf078-5d39-47ef-a465-889ede7d2062"),
                             JmenoPacient = "Johnny",
-                            Kod = "",
                             Name = "scan",
                             PrijmeniPacient = "Karasek",
                             UkonDateTime = new DateTime(2020, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -149,7 +146,6 @@ namespace PptNemocnice.Api.Migrations
                         {
                             Id = new Guid("d72872dc-47d4-4f5c-95a3-78c50c936c25"),
                             JmenoPacient = "Paul",
-                            Kod = "",
                             Name = "probmemek",
                             PrijmeniPacient = "Puta",
                             UkonDateTime = new DateTime(2014, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -159,7 +155,6 @@ namespace PptNemocnice.Api.Migrations
                         {
                             Id = new Guid("f136bbaa-faa7-4343-b29e-9887c767b265"),
                             JmenoPacient = "Dave",
-                            Kod = "",
                             Name = "profiscan",
                             PrijmeniPacient = "Paid",
                             UkonDateTime = new DateTime(2017, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),

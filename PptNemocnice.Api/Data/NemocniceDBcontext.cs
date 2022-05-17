@@ -41,10 +41,23 @@ public class NemocniceDBcontext : DbContext
         Guid idUkon2 = new Guid("d72872dc-47d4-4f5c-95a3-78c50c936c25");
         Guid idUkon3 = new Guid("f136bbaa-faa7-4343-b29e-9887c767b265");
 
+        Guid idPracovnik = new Guid("8ae660c7-7660-436b-9bed-ca76faa2c617");
+        Guid idPracovnik2 = new Guid("071c0f36-82c6-4ecc-ac8e-37130ef35226");
+        Guid idPracovnik3 = new Guid("547184e4-9a55-4172-9ffb-7ece02cd29c3");
+
         builder.Entity<Ukon>().HasData(
-            new Ukon() { Id = idUkon , VybaveniId = idVybaveni , Name = "scan"     , UkonDateTime = d , JmenoPacient = "Johnny", PrijmeniPacient = "Karasek"},
-            new Ukon() { Id = idUkon2, VybaveniId = idVybaveni2, Name = "probmemek", UkonDateTime = d2, JmenoPacient = "Paul"  , PrijmeniPacient = "Puta"   },
+            new Ukon() { Id = idUkon , VybaveniId = idVybaveni , Name = "scan"     , UkonDateTime = d , JmenoPacient = "Johnny", PrijmeniPacient = "Karasek" },
+            new Ukon() { Id = idUkon2, VybaveniId = idVybaveni2, Name = "probmemek", UkonDateTime = d2, JmenoPacient = "Paul"  , PrijmeniPacient = "Puta"  },
             new Ukon() { Id = idUkon3, VybaveniId = idVybaveni3, Name = "profiscan", UkonDateTime = d3, JmenoPacient = "Dave"  , PrijmeniPacient = "Paid"   }
+            );
+        // Pracovnik
+        
+
+        builder.Entity<Pracovnik>().HasData(
+            new Pracovnik() { PracovnikId = idPracovnik, Name = "Paroubek" },
+             new Pracovnik() { PracovnikId = idPracovnik2, Name = "Navara" },
+              new Pracovnik() { PracovnikId = idPracovnik3, Name = "Reichl" }
+
             );
     }
 
@@ -53,4 +66,8 @@ public class NemocniceDBcontext : DbContext
     public DbSet<Revize> Revizes => Set<Revize>();
 
     public DbSet<Ukon> Ukons => Set<Ukon>();
+
+    public DbSet<Pracovnik> Pracovniks => Set<Pracovnik>();
+
+    // public DbSet<Ukon> Ukons => Set<Ukon>();
 }

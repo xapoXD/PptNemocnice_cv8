@@ -116,10 +116,10 @@ app.MapGet("/vybaveni/{Id}",(Guid Id, NemocniceDBcontext db, IMapper mapper) =>
     return Results.Json(ent);
 });
 
-
+//pracovnik
 app.MapGet("/ukon/{Id}", (Guid Id, NemocniceDBcontext db, IMapper mapper) =>
 {
-   var item = db.Vybavenis.Include(x => x.Ukons).SingleOrDefault(x => x.Id == Id);
+   var item = db.Vybavenis.Include(x => x.Ukons).ThenInclude(x => x.Pracovnik).SingleOrDefault(x => x.Id == Id);
 
     if (item == null) return Results.NotFound("takováto entita neexistuje");
 
@@ -296,6 +296,50 @@ app.MapGet("/revize/{vyhledavanyRetezec}", (string vyhledavanyRetezec, Nemocnice
     var kdeJeRetezec = db.Revizes.Where(x => x.Nazev.Contains(vyhledavanyRetezec));
     return Results.Json(kdeJeRetezec);
 });
+
+
+
+//seeeed
+
+app.MapGet("/seed/{tajnyKod}", (string tajnyKod, NemocniceDBcontext db, IMapper mapper, IConfiguration config) =>
+{
+    if (tajnyKod != config["seedSecrete"])
+        return Results.NotFound();
+
+    Random rnd = new();
+    List<Pracovnik> pracanti = new();
+    int pocetPracantu = 10;
+    for (int i = 0; i < pocetPracantu; i++)
+        pracanti.Add(new() { Name = RandomString(12) });
+
+    db.AddRange(pracanti); db.SaveChanges();
+
+    foreach (var vyb in db.Vybavenis)//pro každé vybavení
+    {
+        int pocetUkonu = rnd.Next(13, 25);
+        for (int i = 0; i < pocetUkonu; i++)//se vytvoøí nìkolik úkonù
+        {
+            Ukon uk = new()
+            {
+                UkonDateTime = DateTime.UtcNow.AddDays(rnd.Next(-100, -1)),
+                Name = RandomString(56).Replace("x", " "),
+                JmenoPacient = RandomString(5),
+                PrijmeniPacient = RandomString(5),
+                VybaveniId = vyb.Id,//daného vybavení
+                PracovnikId = pracanti[rnd.Next(pocetPracantu - 1)].PracovnikId
+            };
+            db.Ukons.Add(uk);
+        }
+    }
+    db.SaveChanges();
+
+    return Results.Ok();
+
+    string RandomString(int length) =>//lokální funkce
+        new(Enumerable.Range(0, length).Select(_ => (char)rnd.Next('a', 'z')).ToArray());
+});
+
+
 
 app.MapControllers();
 

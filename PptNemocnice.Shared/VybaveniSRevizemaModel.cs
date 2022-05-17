@@ -20,5 +20,6 @@ namespace PptNemocnice.Shared
             public int PriceCzk { get; set; }
 
             public List<UkonModel> Ukons { get; set; } = new();
-        }
+
+    }
 }

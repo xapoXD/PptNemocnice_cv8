@@ -21,8 +21,12 @@ namespace PptNemocnice.Shared
 
         public Guid VybaveniId { get; set; }
 
+        public Guid? PracovnikId { get; set; }
 
-       public bool IsInNewMode { get; set; }
+      //  public string? PracovnikJmeno { get; set; }
+
+
+        public bool IsInNewMode { get; set; }
 
        //public DateTime VybaveniDateTime { get; set; };
     }

@@ -12,10 +12,17 @@
 
         public string PrijmeniPacient { get; set; } = string.Empty;
 
+       
+
         public Guid VybaveniId { get; set; }
 
         public Vybaveni Vybaveni { get; set; } = null!;
 
-      //  public DateTime VybaveniDateTime { get; set; };
+        public Guid? PracovnikId { get; set; }
+
+        public Pracovnik? Pracovnik { get; set; } 
+
+
+        //  public DateTime VybaveniDateTime { get; set; };
     }
 }
